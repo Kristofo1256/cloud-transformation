@@ -1,57 +1,57 @@
-Komenda 1: whoami
-Co robi: Pokazuje Twój aktualny kontekst bezpieczeństwa. Zobaczysz krzysztof. W chmurze zawsze upewniasz się, czy nie działasz z konta administratora (root), co jest błędem w sztuce.
-Komenda 2: pwd
-Co robi: Print Working Directory – pokazuje dokładnie, w którym miejscu drzewa katalogów się znajdujesz.
-Komenda 3: uname -a
-Co robi: Wypluwa architekturę procesora i wersję jądra Linuxa. Zobaczysz tam flagę aarch64 lub arm64, co potwierdza, że Ubuntu idealnie gada z procesorem Twojego Maka.
-Komenda 4: free -m
-Co robi: Pokazuje zużycie pamięci RAM w megabajtach (-m). Zobaczenie kolumn total, used i free to odpowiednik zakładki "Wydajność" z Menedżera Zadań Windows.
-Komenda 5: df -h
-Co robi: Pokazuje stan dysków w czytelnej formie (w GB, a nie bajtach – flaga -h). Szukasz wiersza z samym ukośnikiem / w kolumnie Mounted on. To Twój główny dysk (odpowiednik dysku C:).
+# 🚀 KROK 1: MIESIĄC LINUXA DLA ADMINA WINDOWSA
 
-ip a ->> sprawdza adres IP
+Notatki i cheat-sheet z laboratoriów inżynieryjnych. Wszystkie komendy przetestowane i wdrożone w środowisku VS Code + UTM.
 
+---
 
-Komenda 1: echo "Serwer produkcyjny Windows przestał mi wystarczać" > motywacja.txt
-Co robi: Operator > przekierowuje tekst i tworzy nowy plik motywacja.txt.
-Komenda 2: echo "Dlatego wchodzę w Cloud i zgarniam stawki w EUR!" >> motywacja.txt
-Co robi: Operator >> (podwójny) dopisuje tekst na końcu pliku, nie niszcząc poprzedniej zawartości.
-Komenda 3: cat motywacja.txt
-Co robi: Wyświetla zawartość pliku bezpośrednio pod komendą w terminalu.
-Komenda 4: grep "EUR" motywacja.txt
-Co robi: Przeszukuje plik i wyciąga tylko linie zawierające słowo "EUR". Za chwilę będziesz tym filtrował logi systemowe o rozmiarze 5 GB w poszukiwaniu słowa ERROR.
+## 🕵️‍♂️ BLOK 1: DETEKTYWISTYKA SYSTEMOWA (ZWIAD)
+* `whoami` - Sprawdza aktualny kontekst bezpieczeństwa (użytkownika). Zawsze weryfikuj, czy nie stoisz na `root`.
+* `pwd` - Print Working Directory. Pokazuje pełną ścieżkę katalogu, w którym się znajdujesz.
+* `uname -a` - Wypluwa architekturę procesora (np. aarch64/arm64) oraz wersję kernela Linuxa.
+* `free -m` - Odpowiednik zakładki Wydajność w Menedżerze Zadań Windows. Pokazuje RAM w MB.
+* `df -h` - Odpowiednik zarządzania dyskami. Pokazuje zużycie dysków w czytelnej formie (GB). Szukaj `/`.
 
-Komenda 6: chmod +x skrypt.sh
-Co robi: Dodaje flagę wykonywalności (+x) do skryptu.
+---
 
+## 📝 BLOK 2: MANIPULACJA PLIKAMI I POTOKAMI
+* `mkdir -p folder/podfolder && cd folder/podfolder` - Tworzy strukturę katalogów i od razu do niej wchodzi.
+* `echo "tekst" > plik.txt` - Tworzy plik i wpisuje do niego zawartość (nadpisuje stary plik).
+* `echo "tekst" >> plik.txt` - Dopisuje tekst na sam koniec istniejącego pliku.
+* `cat plik.txt` - Wyświetla zawartość pliku tekstowego bezpośrednio w terminalu.
+* `grep "fraza" plik.txt` - Przeszukuje plik i wyciąga linie zawierające frazę. Przydatne do filtrowania logów pod kątem `ERROR`.
 
-Komenda 4: echo -e "#!/bin/bash\necho 'Automatyzacja DevOps odpala sie...'" > skrypt.sh
-Co robi: Tworzy prosty plik, który jest skryptem powłoki (odpowiednik pliku .ps1 lub .bat).
+---
 
-Komenda 2: htop
-Co robi: Odpala genialny, interaktywny menedżer zadań w terminalu. Widzisz zużycie rdzeni procesora, pamięć RAM i procesy. Wyjdź z niego, wciskając klawisz q.
+## 🔒 BLOK 3: UPRAWNIENIA CHMOD (BEZPIECZEŃSTWO)
+> 💡 Uprawnienia to sumy cyfr dla: Właściciela | Grupy | Świata. (4 = Read, 2 = Write, 1 = Execute).
+* `ls -l plik.txt` - Wyświetla szczegółowe uprawnienia pliku (np. `-rw-r--r--`).
+* `chmod 600 plik.txt` - Daje odczyt i zapis TYLKO właścicielowi. Blokuje grupę i świat (kluczowe dla kluczy `.pem` w AWS).
+* `chmod +x skrypt.sh` - Nadaje plikowi flagę wykonywalności (Execute). Pozwala odpalić skrypt przez `./skrypt.sh`.
 
-Bash
-sudo ss -tulpn
-Szybki cheat-sheet, co oznaczają te flagi (warto wpisać do NOTATKI.md):
--t – pokrój tylko połączenia TCP (odpowiednik Twoich Windowsowych nasłuchiwań HTTP/SQL)  
-PDF
--u – pokrój połączenia UDP (np. DNS)
--l – filtruj tylko porty, które aktualnie słuchają (listening)
--p – pokaż proces/program (PID), który ten port zajął (wymaga sudo)
--n – pokazuj porty jako liczby (np. 22), a nie nazwy usług (np. ssh)
-Wbijaj sudo ss -tulpn. Powinieneś zobaczyć tabelę, a w niej m.in. linię z portem *:22 i procesem sshd.
+---
 
+## 🛠️ BLOK 4: DIAGNOSTYKA SIECI I USŁUGI
+* `sudo apt update && sudo apt install pakiet -y` - Odpowiednik Windows Update / instalacji MSI. Pobiera programy z repozytorium.
+* `htop` - Interaktywny menedżer zadań. Wyjście klawiszem `q`.
+* `sudo ss -tulpn` - Nowoczesny zamiennik `netstat`. Pokazuje porty TCP/UDP, które aktualnie słuchają, oraz ich PID.
+* `sudo systemctl status usługa` - Odpowiednik `Get-Service`. Pokazuje czy usługa (np. `ssh`, `nginx`) działa (zielone `active`).
+* `sudo systemctl disable usługa` - Wyłącza automatyczny start usługi przy boocie systemu.
 
-instalacja nginx:
+---
 
-sudo apt install nginx -y
+## 🪵 BLOK 5 & 6: MONITORING I PROCESY (3. LINIA WSPARCIA)
+* `cd /var/log && ls -la` - Główne archiwum logów systemowych (odpowiednik Windows Event Viewer).
+* `sudo tail -f /var/log/nginx/access.log` - Strumieniuje logi w czasie rzeczywistym. Widzisz każdy ruch na serwerze na żywo. Wyjście: `Ctrl + C`.
+* `ps aux | grep nazwa` - Pokazuje procesy systemowe przefiltrowane po nazwie wraz z ich numerami PID.
+* `sudo kill -9 PID` - Bezwzględne ubicie procesu przez jądro systemu (odpowiednik End Task).
 
-check czy nginx dziala:
+---
 
-sudo systemctl status nginx
-
-Bash
-cd /var/log && ls -la
-Co robi: Przechodzi do centralnego repozytorium logów systemowych i listuje pliki. Zobaczysz tu pliki takie jak syslog (logi ogólne), auth.log (logi logowania/SSH) oraz katalog nginx (logi Twojego serwera WWW).
-
+## 🔑 BLOK 9: MOSTEK DO CHMURY (GIT + GITHUB SSH)
+> 💡 Klucze SSH pozwalają na bezpieczną komunikację z GitHubem/AWS bez ciągłego wpisywania haseł.
+* `ssh-keygen -t ed25519 -C "Krzysztof.jankowski94@gmail.com"` - Generuje nową, bezpieczną parę kluczy kryptograficznych (publiczny i prywatny).
+* `code ~/.ssh/id_ed25519.pub` - Otwiera plik z kluczem publicznym bezpośrednio w edytorze VS Code, umożliwiając bezpieczne skopiowanie czystego tekstu do schowka.
+* `ssh -T git@github.com` - Testuje i weryfikuje połączenie SSH z GitHubem. Prawidłowy wynik to: *Hi! You've successfully authenticated...*
+* `git branch -M main` - Ustala nazwę głównej gałęzi kodu jako `main` (standard branżowy).
+* `git remote add origin git@github.com:LOGIN/REPO.git` - Podpina lokalny folder pod zdalne repozytorium w chmurze GitHuba.
+* `git push -u origin main` - Wypycha (wysyła) wszystkie lokalne zapisy (commity) bezpośrednio do chmury GitHuba.
