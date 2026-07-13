@@ -1,70 +1,128 @@
-# 🚀 KROK 1: MIESIĄC LINUXA DLA ADMINA WINDOWSA
+# DevOps & Cloud Engineering - Module 1: Linux & Docker
 
-Notatki i cheat-sheet z laboratoriów inżynieryjnych. Wszystkie komendy przetestowane i wdrożone w środowisku VS Code + UTM.
-
----
-
-## 🕵️‍♂️ BLOK 1: DETEKTYWISTYKA SYSTEMOWA (ZWIAD)
-* `whoami` - Sprawdza aktualny kontekst bezpieczeństwa (użytkownika). Zawsze weryfikuj, czy nie stoisz na `root`.
-* `pwd` - Print Working Directory. Pokazuje pełną ścieżkę katalogu, w którym się znajdujesz.
-* `uname -a` - Wypluwa architekturę procesora (np. aarch64/arm64) oraz wersję kernela Linuxa.
-* `free -m` - Odpowiednik zakładki Wydajność w Menedżerze Zadań Windows. Pokazuje RAM w MB.
-* `df -h` - Odpowiednik zarządzania dyskami. Pokazuje zużycie dysków w czytelnej formie (GB). Szukaj `/`.
+This document serves as a comprehensive reference guide for Linux system administration, Git workflows, Docker containerization, Docker Compose orchestration, and automation.
 
 ---
 
-## 📝 BLOK 2: MANIPULACJA PLIKAMI I POTOKAMI
-* `mkdir -p folder/podfolder && cd folder/podfolder` - Tworzy strukturę katalogów i od razu do niej wchodzi.
-* `echo "tekst" > plik.txt` - Tworzy plik i wpisuje do niego zawartość (nadpisuje stary plik).
-* `echo "tekst" >> plik.txt` - Dopisuje tekst na sam koniec istniejącego pliku.
-* `cat plik.txt` - Wyświetla zawartość pliku tekstowego bezpośrednio w terminalu.
-* `grep "fraza" plik.txt` - Przeszukuje plik i wyciąga linie zawierające frazę. Przydatne do filtrowania logów pod kątem `ERROR`.
+## 🐧 BLOCK 1: ESSENTIAL LINUX NAVIGATION & FILE OPERATIONS
+> 💡 Command Line Interface (CLI) is the primary tool for managing cloud infrastructure.
+* `pwd` - Print Working Directory (shows exactly where you are in the filesystem).
+* `ls -la` - List directory contents (shows all files, including hidden ones, with detailed permissions and sizes).
+* `cd <directory>` - Change Directory (navigate to a specific folder).
+* `mkdir -p <path>` - Create a directory (and any necessary parent directories) if they do not exist.
+* `touch <filename>` - Create an empty file or update the timestamp of an existing file.
+* `cp <source> <destination>` - Copy files or directories.
+* `mv <source> <destination>` - Move or rename files or directories.
+* `rm -rf <path>` - Recursively and forcefully remove files or directories (use with caution!).
 
 ---
 
-## 🔒 BLOK 3: UPRAWNIENIA CHMOD (BEZPIECZEŃSTWO)
-> 💡 Uprawnienia to sumy cyfr dla: Właściciela | Grupy | Świata. (4 = Read, 2 = Write, 1 = Execute).
-* `ls -l plik.txt` - Wyświetla szczegółowe uprawnienia pliku (np. `-rw-r--r--`).
-* `chmod 600 plik.txt` - Daje odczyt i zapis TYLKO właścicielowi. Blokuje grupę i świat (kluczowe dla kluczy `.pem` w AWS).
-* `chmod +x skrypt.sh` - Nadaje plikowi flagę wykonywalności (Execute). Pozwala odpalić skrypt przez `./skrypt.sh`.
+## 📄 BLOCK 2: VIEWING & EDITING FILES IN LINUX
+> 💡 Reading and modifying configuration files directly from the terminal.
+* `cat <file>` - Display the entire content of a file in the terminal.
+* `less <file>` - Open a file in an interactive, scrollable viewer (press `q` to exit).
+* `head -n <number> <file>` - View the first N lines of a file.
+* `tail -f <file>` - Output the last part of a file and monitor real-time changes (essential for reading logs).
+* `nano <file>` - Open a simple, user-friendly text editor inside the terminal.
 
 ---
 
-## 🛠️ BLOK 4: DIAGNOSTYKA SIECI I USŁUGI
-* `sudo apt update && sudo apt install pakiet -y` - Odpowiednik Windows Update / instalacji MSI. Pobiera programy z repozytorium.
-* `htop` - Interaktywny menedżer zadań. Wyjście klawiszem `q`.
-* `sudo ss -tulpn` - Nowoczesny zamiennik `netstat`. Pokazuje porty TCP/UDP, które aktualnie słuchają, oraz ich PID.
-* `sudo systemctl status usługa` - Odpowiednik `Get-Service`. Pokazuje czy usługa (np. `ssh`, `nginx`) działa (zielone `active`).
-* `sudo systemctl disable usługa` - Wyłącza automatyczny start usługi przy boocie systemu.
+## 🔒 BLOCK 3: USER MANAGEMENT & PERMISSIONS
+> 💡 Security first: Managing file access rights and superuser privileges.
+* `sudo <command>` - Execute a command with administrative (root) privileges.
+* `chmod +x <file>` - Make a file executable (allows running it as a script).
+* `chmod 600 <file>` - Set read/write permissions for the owner only (commonly used for SSH keys).
+* `chown <user>:<group> <file>` - Change the owner and group ownership of a file or directory.
 
 ---
 
-## 🪵 BLOK 5 & 6: MONITORING I PROCESY (3. LINIA WSPARCIA)
-* `cd /var/log && ls -la` - Główne archiwum logów systemowych (odpowiednik Windows Event Viewer).
-* `sudo tail -f /var/log/nginx/access.log` - Strumieniuje logi w czasie rzeczywistym. Widzisz każdy ruch na serwerze na żywo. Wyjście: `Ctrl + C`.
-* `ps aux | grep nazwa` - Pokazuje procesy systemowe przefiltrowane po nazwie wraz z ich numerami PID.
-* `sudo kill -9 PID` - Bezwzględne ubicie procesu przez jądro systemu (odpowiednik End Task).
+## ⚡ BLOCK 4: PROCESS MANAGEMENT & SYSTEM MONITORING
+> 💡 Keeping track of system resources, CPU, memory, and running applications.
+* `ps aux` - Snapshot of all currently running processes in the system.
+* `top` / `htop` - Interactive, real-time system resource and process monitor.
+* `kill -9 <PID>` - Forcefully terminate a process using its Process ID.
+* `df -h` - Display free and used disk space on mounted filesystems in human-readable format.
+* `free -h` - Display total, used, and available physical memory (RAM).
 
 ---
 
-## 🔑 BLOK 9: MOSTEK DO CHMURY (GIT + GITHUB SSH)
-> 💡 Klucze SSH pozwalają na bezpieczną komunikację z GitHubem/AWS bez ciągłego wpisywania haseł.
-* `ssh-keygen -t ed25519 -C "Krzysztof.jankowski94@gmail.com"` - Generuje nową, bezpieczną parę kluczy kryptograficznych (publiczny i prywatny).
-* `code ~/.ssh/id_ed25519.pub` - Otwiera plik z kluczem publicznym bezpośrednio w edytorze VS Code, umożliwiając bezpieczne skopiowanie czystego tekstu do schowka.
-* `ssh -T git@github.com` - Testuje i weryfikuje połączenie SSH z GitHubem. Prawidłowy wynik to: *Hi! You've successfully authenticated...*
-* `git branch -M main` - Ustala nazwę głównej gałęzi kodu jako `main` (standard branżowy).
-* `git remote add origin git@github.com:LOGIN/REPO.git` - Podpina lokalny folder pod zdalne repozytorium w chmurze GitHuba.
-* `git push -u origin main` - Wypycha (wysyła) wszystkie lokalne zapisy (commity) bezpośrednio do chmury GitHuba.
+## 🌐 BLOCK 5: NETWORKING & TROUBLESHOOTING
+> 💡 Diagnosing network connections and verifying open ports.
+* `ip a` - Show all network interfaces and assigned IP addresses.
+* `ping <host>` - Send ICMP ECHO_REQUEST packets to network hosts to test connectivity.
+* `curl -I <URL>` - Fetch the HTTP headers of a webpage to verify server status.
+* `netstat -tuln` / `ss -tuln` - List all active listening ports (TCP and UDP) on the system.
 
 ---
 
-## 🐳 BLOK 10 & 11: ENGINE DEPLOYMENT & CONTAINER LIFECYCLE
-> 💡 Docker pozwala na izolację aplikacji od systemu operacyjnego hosta za pomocą lekkich kontenerów.
-* `sudo apt install docker.io -y` - Instalacja oficjalnego silnika Docker Engine w systemie Ubuntu Server.
-* `sudo usermod -aG docker $USER` - Dodanie bieżącego użytkownika do grupy systemowej `docker` (nadanie uprawnień do zarządzania kontenerami bez użycia `sudo`).
-* `newgrp docker` - Natychmiastowe odświeżenie grup systemowych w bieżącej sesji terminala (eliminuje błąd *Permission Denied*).
-* `docker run -d -p 8080:80 --name ecommerce-landing-page nginx` - Pobranie obrazu Nginx i uruchomienie go w tle (`-d`) z mapowaniem portu zewnętrznego hosta `8080` na wewnętrzny port kontenera `80`.
-* `docker ps` - Listowanie aktywnych kontenerów wraz z ich identyfikatorami PID/ID, portami i statusem.
-* `docker logs [container_name]` - Ekstrakcja logów aplikacyjnych bezpośrednio ze strumienia kontenera (kluczowe do integracji z systemami monitoringu).
-* `docker stop [container_name]` - Wysłanie sygnału SIGTERM do aplikacji wewnątrz kontenera i bezpieczne jej zatrzymanie.
-* `docker rm [container_name]` - Całkowite usunięcie zasobów kontenera z dysku systemowego.
+## 📦 BLOCK 6: PACKAGE MANAGEMENT (APT)
+> 💡 Installing, updating, and managing software packages on Debian/Ubuntu systems.
+* `sudo apt update` - Update the local index of available packages from remote repositories.
+* `sudo apt upgrade -y` - Upgrade all installed packages to their latest versions.
+* `sudo apt install <package> -y` - Download and install a specific software package.
+* `sudo apt remove <package>` - Uninstall a package while keeping its configuration files.
+
+---
+
+## 🗂️ BLOCK 7: ARCHIVING & COMPRESSION
+> 💡 Packaging multiple files together for backups or transfers.
+* `tar -czvf archive.tar.gz <directory>` - Compress a directory into a `.tar.gz` archive.
+* `tar -xzvf archive.tar.gz` - Extract a compressed `.tar.gz` archive to the current directory.
+* `zip -r archive.zip <directory>` - Compress files/folders into a `.zip` file.
+* `unzip archive.zip` - Extract a `.zip` archive.
+
+---
+
+## 🛠️ BLOCK 8: ENVIRONMENT VARIABLES & PATH
+> 💡 Configuring system-wide and user-specific variables.
+* `export VAR_NAME="value"` - Set a temporary environment variable for the current session.
+* `echo $VAR_NAME` - Print the value of an environment variable.
+* `env` - List all currently active environment variables.
+* `~/.bashrc` - User configuration file where persistent environment variables and aliases are defined.
+
+---
+
+## 🐙 BLOCK 9: GIT & GITHUB WORKFLOW (GIT FLOW)
+> 💡 Industry-standard collaborative development and version control.
+* `git checkout -b <branch>` - Create and switch to a new development branch.
+* `git status` - Show the working tree status (untracked, modified, or staged files).
+* `git add .` - Stage all current changes for the next commit.
+* `git commit -m "prefix(scope): message"` - Record staged changes to repository history (using Conventional Commits).
+* `git push -u origin <branch>` - Push local branch to GitHub and set up remote tracking.
+* `git pr` (Custom Alias) - Automatically pushes the current branch and creates a GitHub Pull Request using GitHub CLI (`gh`).
+
+---
+
+## 🐳 BLOCK 10: DOCKER FUNDAMENTALS & CONTAINER LIFE CYCLE
+> 💡 Packaging applications into isolated, portable, lightweight runtimes.
+* `docker run -d -p <host-port>:<container-port> --name <name> <image>` - Run a container in detached mode with port mapping.
+* `docker ps -a` - List all running and stopped containers.
+* `docker stop <container>` - Stop a running container gracefully.
+* `docker rm <container>` - Remove a stopped container from the host system.
+* `docker logs -f <container>` - Fetch and stream real-time logs of a specific container.
+* `docker exec -it <container> sh` - Open an interactive shell inside a running container.
+
+---
+
+## 🏗️ BLOCK 11: CUSTOM IMAGE CREATION (DOCKERFILE)
+> 💡 Defining application blueprints to build repeatable and standardized images.
+* `FROM` - Set the base image for subsequent instructions (e.g., `nginx:alpine`).
+* `COPY <src> <dest>` - Copy files or directories from the host machine into the container's filesystem.
+* `EXPOSE <port>` - Document the port on which the container will listen at runtime.
+* `docker build -t <tag-name> .` - Build a custom Docker image using the Dockerfile in the current directory.
+
+---
+
+## 🐙 BLOCK 12: MULTI-CONTAINER ORCHESTRATION WITH DOCKER COMPOSE
+> 💡 Defining and running multi-container applications using a single YAML configuration file.
+* `docker compose up -d` - Build, (re)create, start, and run containers for services defined in `docker-compose.yml` in detached mode.
+* `docker compose down` - Stop and remove containers, networks, volumes, and images created by `up`.
+* `docker compose ps` - List all containers associated with the current Compose project and their statuses.
+
+---
+
+## 💾 BLOCK 13: PERSISTENT DATA WITH DOCKER VOLUMES & BIND MOUNTS
+> 💡 Sharing directories and files dynamically between the host machine (Ubuntu) and the container.
+* `Bind Mount` - Direct mapping of a specific, existing path on the host to a path inside the container. Ideal for real-time code development.
+* `docker run -v /host/path:/container/path` - Mount a directory using the legacy run command.
+* In Docker Compose: Defined under the `volumes:` key for a specific service to synchronize code and persist data.
