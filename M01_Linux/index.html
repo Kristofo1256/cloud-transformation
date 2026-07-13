@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sirk Cloud — Kompleksowa opieka IT dla Twojej firmy</title>
+<meta name="description" content="IT z ludzkim podejściem. Bez straszenia technologią, bez komplikacji. Obsługa IT już od 250 zł miesięcznie.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Silniki animacji i ikony -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+  :root {
+    --bg: #0A0A0B;
+    --bg-surface: #131316;
+    --blue: #0AF5C0;
+    --cyan: #06B6D4;
+    --primary: #2563EB;
+    --border: #222226;
+    --ink: #FAFAFA;
+    --ink-dim: #8A8A93;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  section { scroll-margin-top: 80px; }
+
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 100;
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    box-shadow: 0 0 15px var(--blue);
+  }
+
+  .cursor-glow {
+    position: fixed; top: 0; left: 0; width: 450px; height: 450px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(10, 245, 192, 0.08), rgba(6, 182, 212, 0.03) 45%, transparent 70%);
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 1;
+    will-change: transform; opacity: 0; transition: opacity 0.4s ease;
+  }
+
+  .noise {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* TŁO SIECIOWE */
+  .network-bg-field { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.55; }
+  #networkCanvas { width: 100%; height: 100%; display: block; }
+
+  /* NAVBAR */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 11, 0.7); border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; max-width: 1200px; margin: 0 auto; }
+  .logo-img { height: 46px; width: auto; object-fit: contain; display: block; }
+  .nav-right { display: flex; align-items: center; gap: 32px; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; font-family: var(--font-mono); }
+  
+  .nav-links a {
+    color: var(--ink-dim); text-decoration: none; position: relative; padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 6px;
+    transition: all .25s ease; cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--ink); border-color: var(--blue); background: rgba(10, 245, 192, 0.04); }
+  
+  .nav-cta { 
+    font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 6px; 
+    background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #0A0A0B; 
+    text-decoration: none; position: relative; overflow: hidden; font-family: var(--font-mono);
+    box-shadow: 0 4px 20px rgba(10, 245, 192, 0.2); transition: transform 0.3s ease; cursor: pointer;
+  }
+  .nav-cta:hover { transform: scale(1.03); }
+  .nav-cta span.shine {
+    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg); transition: left 0.6s ease;
+  }
+  .nav-cta:hover span.shine { left: 130%; }
+
+  /* HERO */
+  .hero { position: relative; min-height: auto; display: flex; align-items: center; padding: 120px 0 40px; z-index: 2; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue);
+    border: 1px solid rgba(10, 245, 192, 0.2); padding: 8px 16px; border-radius: 999px; background: rgba(10, 245, 192, 0.04); margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(2.4rem, 4.5vw, 4.2rem); font-weight: 700; margin-bottom: 20px; }
+  .hero h1 .accent { color: var(--blue); }
+  .hero p.sub { font-size: 18px; color: var(--ink-dim); max-width: 540px; margin-bottom: 20px; line-height: 1.65; }
+
+  .hero-live-status {
+    display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border); padding: 10px 16px; border-radius: 8px; font-family: var(--font-mono);
+    font-size: 11px; color: var(--ink-dim); margin-bottom: 24px;
+  }
+  .status-pulse-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80; animation: pulseGlow 1.8s infinite; }
+  @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.4; } }
+
+  .hero-ctas { display: flex; gap: 16px; margin-bottom: 24px; }
+
+  .hero-tags-box { display: flex; flex-wrap: wrap; gap: 8px; max-width: 500px; margin-bottom: 24px; }
+  .hero-tag-pill { font-family: var(--font-mono); font-size: 11px; color: rgba(250,250,250,0.4); background: rgba(19,19,22,0.6); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; }
+
+  /* PANEL METRYK BIZNESOWYCH (DÓŁ LEWEJ KOLUMNY) */
+  .variant-container { max-width: 500px; width: 100%; font-family: var(--font-mono); text-align: left; }
+  .v1-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .v1-box { background: rgba(19,19,22,0.4); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .v1-val { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .v1-lbl { font-size: 10px; color: var(--ink-dim); line-height: 1.3; text-transform: uppercase; }
+
+  .btn {
+    padding: 16px 32px; border-radius: 6px; font-weight: 600; font-size: 15px; cursor: pointer; text-decoration: none;
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease; font-family: var(--font-mono);
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--cyan)); color: #fff; border: none; }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); }
+  .btn-ghost { color: var(--ink); border: 1px solid var(--border); background: rgba(255,255,255,0.01); }
+  .btn-ghost:hover { transform: translateY(-3px); border-color: var(--blue); background: rgba(255,255,255,0.03); }
+
+  /* KONSOLA I KARTA MONITORINGU */
+  .hero-consoles-wrapper { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+  
+  .terminal-window {
+    background: rgba(19, 19, 22, 0.85); border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5); font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-align: left;
+    height: 240px; width: 100%; max-height: 240px; overflow-y: auto; backdrop-filter: blur(12px); display: flex; flex-direction: column; cursor: text;
+  }
+  .terminal-header { display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-shrink: 0; }
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .term-dot.r { background: #ef4444; }
+  .term-dot.y { background: #f59e0b; }
+  .term-dot.g { background: #10b981; }
+  .terminal-body { line-height: 1.6; flex-grow: 1; }
+  .t-prompt { color: var(--blue); }
+  .t-success { color: #4ade80; }
+  
+  .t-progress-container { width: 100%; white-space: nowrap; overflow: hidden; display: block; color: var(--blue); font-family: var(--font-mono); }
+
+  .term-cursor { display: inline-block; width: 8px; height: 15px; background: var(--blue); margin-left: 2px; animation: binBlink 1s infinite steps(1); vertical-align: middle; }
+  @keyframes binBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  
+  .terminal-input-line { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+  .terminal-hidden-input { position: absolute; opacity: 0; pointer-events: none; left: -9999px; }
+  .terminal-editable-text { white-space: pre-wrap; word-break: break-all; color: var(--ink); }
+
+  /* INFRA MONITOR VISUAL */
+  .infra-card { background: rgba(19, 19, 22, 0.85); border: 1px solid var(--border); border-radius: 12px; padding: 22px; width: 100%; backdrop-filter: blur(12px); }
+  .infra-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .infra-hub-ring { fill: none; stroke: rgba(10,245,192,0.35); stroke-width: 1; animation: hubPulse 2.4s ease-out infinite; transform-origin: center; }
+  @keyframes hubPulse { 0% { r: 9; opacity: 0.9; } 100% { r: 26; opacity: 0; } }
+  .infra-line { stroke: rgba(10,245,192,0.28); stroke-width: 1.25; fill: none; stroke-dasharray: 3 5; animation: infraFlow 2.6s linear infinite; }
+  @keyframes infraFlow { to { stroke-dashoffset: -80; } }
+  .infra-node-ring { fill: none; stroke: rgba(74,222,128,0.5); stroke-width: 1; animation: nodePulse 2.8s ease-out infinite; transform-origin: center; }
+  @keyframes nodePulse { 0% { r: 5; opacity: 0.8; } 100% { r: 15; opacity: 0; } }
+  .infra-label { font-family: var(--font-mono); font-size: 8px; fill: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.03em; }
+  .infra-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 12px; }
+  .infra-metric .val { font-family: var(--font-display); font-size: 1.4rem; color: var(--ink); font-weight: 600; }
+  .infra-metric .label { font-family: var(--font-mono); font-size: 9px; color: var(--ink-dim); text-transform: uppercase; margin-top: 4px; display: block; }
+
+  /* KARUZELA MARQUEE */
+  .marquee {
+    position: relative; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: rgba(19, 19, 22, 0.4); padding: 16px 0; margin-top: 24px; z-index: 2; width: 100%;
+  }
+  .marquee-track { 
+    display: inline-flex; gap: 40px; white-space: nowrap; 
+    animation: marqueeMove 80s linear infinite; 
+  }
+  @keyframes marqueeMove { 
+    0% { transform: translateX(0%); } 
+    100% { transform: translateX(-50%); } 
+  }
+  .marquee span { font-family: var(--font-mono); font-size: 13px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .marquee .sep { color: var(--blue); }
+
+  /* OGÓLNE ODSTĘPY SEKCJI */
+  .section-pad { padding: 75px 0; position: relative; z-index: 2; }
+  .section-head { max-width: 650px; margin-bottom: 36px; }
+  .section-tag { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); font-weight: 700; margin-bottom: 8px; display: block; font-family: var(--font-mono); }
+  .section-head h2 { font-family: var(--font-display); font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 700; margin-bottom: 14px; }
+  .section-head p { color: var(--ink-dim); font-size: 17px; line-height: 1.65; }
+
+  /* BENTO GRID */
+  .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .bento { grid-template-columns: 1fr; } }
+  .bento-card {
+    background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden;
+  }
+  .bento-card:hover { 
+    border-color: rgba(10, 245, 192, 0.5); 
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(10, 245, 192, 0.04);
+  }
+  .bento-card h3 { font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; font-weight: 600; }
+  .bento-card p { color: var(--ink-dim); font-size: 15px; line-height: 1.65; }
+  .bento-icon { color: var(--blue); margin-bottom: 20px; }
+
+  /* KALKULATOR CENNIKA */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 900px) { .calc-grid { grid-template-columns: 1fr; gap: 30px; } }
+  .price-card {
+    background: linear-gradient(160deg, rgba(37, 99, 235, 0.08), rgba(10, 245, 192, 0.03));
+    border: 1px solid rgba(10, 245, 192, 0.25); border-radius: 24px; padding: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4); position: relative;
+  }
+  .slider-container { margin: 16px 0; }
+  .slider-header { display: flex; justify-content: space-between; font-size: 14px; color: var(--ink-dim); margin-bottom: 10px; }
+  .slider-header b { color: var(--ink); font-family: var(--font-display); font-size: 16px; }
+  
+  #machineSlider {
+    -webkit-appearance: none; width: 100%; height: 8px; border-radius: 999px;
+    background: var(--border); outline: none; margin: 8px 0; cursor: pointer;
+  }
+  #machineSlider::-webkit-slider-runnable-track { width: 100%; height: 8px; border-radius: 999px; }
+  #machineSlider::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--blue)); cursor: pointer; margin-top: -7px;
+    box-shadow: 0 0 10px rgba(10, 245, 192, 0.6); transition: transform 0.1s;
+  }
+  #machineSlider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  #machineSlider::-moz-range-thumb {
+    height: 22px; width: 22px; border: none; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--blue)); cursor: pointer;
+    box-shadow: 0 0 10px rgba(10, 245, 192, 0.6); transition: transform 0.1s;
+  }
+  #machineSlider::-moz-range-thumb:hover { transform: scale(1.15); }
+
+  .price-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; margin-bottom: 24px; }
+  .metric-box { background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 20px; border-radius: 12px; }
+  .metric-box.active { border-color: rgba(10, 245, 192, 0.3); background: rgba(10, 245, 192, 0.02); }
+  .metric-lbl { font-size: 11px; color: var(--ink-dim); text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-mono); }
+  .metric-num { font-size: 32px; font-weight: 700; font-family: var(--font-display); }
+  .metric-num small { font-size: 14px; color: var(--ink-dim); font-family: var(--font-body); }
+  
+  .calc-email-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+    padding: 16px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), var(--blue));
+    color: #0A0A0B; font-weight: 700; font-size: 15px; text-decoration: none; font-family: var(--font-mono);
+    box-shadow: 0 4px 20px rgba(10, 245, 192, 0.15); transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .calc-email-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(10, 245, 192, 0.3); }
+
+  /* KONTAKT */
+  .contact-box { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+  @media (max-width: 900px) { .contact-box { grid-template-columns: 1fr; gap: 30px; } }
+  .contact-method {
+    display: flex; align-items: center; gap: 20px; text-decoration: none; color: var(--ink);
+    padding: 20px; background: rgba(19, 19, 22, 0.4); border: 1px solid var(--border);
+    border-radius: 12px; transition: border-color 0.4s, background 0.4s; margin-bottom: 14px;
+  }
+  .contact-method:hover { border-color: rgba(10, 245, 192, 0.3); background: rgba(19, 19, 22, 0.7); }
+  .method-icon { width: 44px; height: 44px; border-radius: 8px; background: rgba(10, 245, 192, 0.08); color: var(--blue); display: flex; align-items: center; justify-content: center; }
+  .method-icon svg { display: block; }
+  
+  /* FOOTER */
+  .footer { border-top: 1px solid var(--border); padding: 36px 0; background: #060608; font-size: 13px; color: var(--ink-dim); position: relative; z-index: 2; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .footer-left { display: flex; flex-direction: column; gap: 6px; }
+  .privacy-trigger { color: var(--ink-dim); text-decoration: underline; cursor: pointer; transition: color 0.2s; }
+  .privacy-trigger:hover { color: var(--blue); }
+  .footer-socials { display: flex; align-items: center; gap: 24px; }
+  .footer-socials a { color: var(--ink-dim); transition: color 0.3s; text-decoration: none; font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 8px; }
+  .footer-socials a svg { fill: none; stroke: var(--ink-dim); transition: stroke 0.3s; }
+  .footer-socials a:hover { color: var(--blue); }
+  .footer-socials a:hover svg { stroke: var(--blue); }
+
+  /* BANER COOKIES */
+  .cookie-banner {
+    position: fixed; bottom: -130px; left: 24px; right: 24px; max-width: 500px; margin: 0 auto 24px 24px;
+    background: rgba(19, 19, 22, 0.95); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; backdrop-filter: blur(16px); z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; gap: 14px; 
+    opacity: 0; transition: bottom 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease;
+  }
+  .cookie-banner.show { bottom: 0; opacity: 1; }
+  .cookie-text { font-size: 13px; color: var(--ink-dim); line-height: 1.5; }
+  .cookie-text b { color: var(--ink); }
+  .cookie-btn {
+    background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #0A0A0B;
+    border: none; padding: 10px 18px; font-weight: 700; font-size: 12px; font-family: var(--font-mono);
+    border-radius: 6px; cursor: pointer; align-self: flex-end; transition: transform 0.2s ease;
+  }
+  .cookie-btn:hover { transform: scale(1.02); }
+
+  /* OKNO MODALNE */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 24px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-window {
+    background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+    max-width: 680px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 36px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; background: transparent; border: none;
+    color: var(--ink-dim); cursor: pointer; transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--ink); }
+  
+  .modal-content { text-align: left; font-family: var(--font-body); }
+  .modal-content h2 { font-size: 24px; margin-bottom: 24px; color: var(--ink); border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .modal-content h3 { font-size: 14px; margin: 24px 0 12px; color: var(--blue); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+  .modal-content p { font-size: 14px; color: var(--ink-dim); line-height: 1.6; margin-bottom: 12px; }
+  .modal-content ul { list-style: none; padding-left: 0; margin-bottom: 16px; }
+  .modal-content ul li { font-size: 14px; color: var(--ink-dim); position: relative; padding-left: 16px; margin-bottom: 6px; }
+  .modal-content ul li::before { content: "—"; position: absolute; left: 0; color: var(--blue); }
+  .modal-content a { color: var(--blue); text-decoration: none; }
+  .modal-content a:hover { text-decoration: underline; }
+
+  /* ========================================================================= */
+  /* DEDYKOWANE FIXY DLA WERSJI MOBILNEJ                                       */
+  /* ========================================================================= */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+    .hero p.sub { margin: 16px auto 20px; }
+    .hero-ctas { justify-content: center; }
+    .hero-tags-box { justify-content: center; margin: 0 auto 24px; }
+    .variant-container { margin: 0 auto; }
+
+    /* Fix menu w headerze - redukcja marginesów, by zmieścić całość w linii */
+    .nav-inner { padding: 12px 14px; }
+    .nav-right { gap: 12px; }
+    .nav-links { gap: 6px; font-size: 11px; }
+    .nav-links a { padding: 5px 8px; border-radius: 4px; }
+    .nav-cta { font-size: 11px; padding: 8px 14px; border-radius: 4px; }
+    .logo-img { height: 34px; }
+
+    /* Fix paska ładowania - kurczenie czcionki uniemożliwia rozepchanie okna */
+    .t-progress-container {
+      font-size: clamp(9px, 2.7vw, 12px) !important;
+      letter-spacing: -0.02em;
+    }
+
+    /* Fix stopki - bezpieczne układanie i zawijanie linków kontaktu */
+    .footer-inner { flex-direction: column; text-align: center; gap: 16px; }
+    .footer-socials { flex-wrap: wrap; justify-content: center; gap: 16px; width: 100%; }
+    .footer-socials a { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="noise"></div>
+
+<!-- TŁO SIECIOWE -->
+<div class="network-bg-field">
+  <canvas id="networkCanvas"></canvas>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <div class="logo">
+      <img src="RGB_Sirk Cloud_Horizontal_White_www.png" alt="sirk.cloud logo" class="logo-img">
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a data-target="uslugi">Oferta</a>
+        <a data-target="cennik">Cennik</a>
+        <a data-target="kontakt">Contact</a>
+      </div>
+      <a data-target="kontakt" class="nav-cta">Konsultacja IT</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <!-- LEWA KOLUMNA -->
+    <div>
+      <div class="eyebrow"><span class="logo-mark" style="width:6px; height:6px; box-shadow:none; margin-right:2px; background:var(--blue);"></span> Obsługa IT · Łódź &amp; cała Polska</div>
+      <h1>Twoje IT, <br><span class="accent">ogarnięte</span> na spokojnie.</h1>
+      <p class="sub">Pomagamy firmom ogarniać IT w sposób prosty i zrozumiały – bez straszenia technologią i niepotrzebnych komplikacji.</p>
+      
+      <div class="hero-live-status">
+        <div class="status-pulse-dot"></div>
+        <span>MONITORING INFRASTRUKTURY: ACTIVE // HEARTRATE_OK</span>
+      </div>
+
+      <div class="hero-ctas">
+        <a data-target="uslugi" class="btn btn-primary">Sprawdź ofertę →</a>
+        <a data-target="kontakt" class="btn btn-ghost">Napisz do nas</a>
+      </div>
+
+      <div class="hero-tags-box">
+        <span class="hero-tag-pill">CyberResilience</span>
+        <span class="hero-tag-pill">Helpdesk 24/7</span>
+        <span class="hero-tag-pill">Cloud Hybrid</span>
+        <span class="hero-tag-pill">NextGen Security</span>
+        <span class="hero-tag-pill">DevOps</span>
+      </div>
+
+      <!-- Zaufane metryki biznesowe -->
+      <div class="variant-container">
+        <div class="v1-grid">
+          <div class="v1-box"><div class="v1-val">&lt; 15m</div><div class="v1-lbl">Średni czas reakcji</div></div>
+          <div class="v1-box"><div class="v1-val">99.9%</div><div class="v1-lbl">Uptime systemów</div></div>
+          <div class="v1-box"><div class="v1-val">24/7</div><div class="v1-lbl">Nadzór inżynierski</div></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- PRAWA KOLUMNA -->
+    <div class="hero-consoles-wrapper">
+      <!-- TERMINAL BASH -->
+      <div class="terminal-window" id="terminalWindow">
+        <div class="terminal-header">
+          <span class="term-dot r"></span>
+          <span class="term-dot y"></span>
+          <span class="term-dot g"></span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <div id="initialPrompt"><span class='t-prompt'>root@sirk-cloud:~#</span> <span class='term-cursor'></span></div>
+        </div>
+      </div>
+
+      <!-- MONITOR INFRASTRUKTURY -->
+      <div class="infra-card">
+        <div class="terminal-header" style="margin-bottom:12px; padding-bottom:8px;">
+          <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink-dim); margin-left:6px;">infra_monitor.sh — live</span>
+        </div>
+        <svg class="infra-svg" viewBox="0 0 320 190">
+          <path class="infra-line" d="M60,95 L145,40" />
+          <path class="infra-line" d="M60,95 L210,55" />
+          <path class="infra-line" d="M60,95 L250,105" />
+          <path class="infra-line" d="M60,95 L205,150" />
+          <path class="infra-line" d="M60,95 L120,160" />
+          <g>
+            <circle class="infra-node-ring" cx="145" cy="40" r="5" />
+            <circle cx="145" cy="40" r="4" fill="#4ade80" />
+            <text class="infra-label" x="145" y="28" text-anchor="middle">Windows Srv</text>
+          </g>
+          <g>
+            <circle class="infra-node-ring" cx="210" cy="55" r="5" style="animation-delay:.4s" />
+            <circle cx="210" cy="55" r="4" fill="#4ade80" />
+            <text class="infra-label" x="210" y="43" text-anchor="middle">VMware</text>
+          </g>
+          <g>
+            <circle class="infra-node-ring" cx="250" cy="105" r="5" style="animation-delay:.8s" />
+            <circle cx="250" cy="105" r="4" fill="#4ade80" />
+            <text class="infra-label" x="250" y="123" text-anchor="middle">Proxmox</text>
+          </g>
+          <g>
+            <circle class="infra-node-ring" cx="205" cy="150" r="5" style="animation-delay:1.2s" />
+            <circle cx="205" cy="150" r="4" fill="#4ade80" />
+            <text class="infra-label" x="205" y="168" text-anchor="middle">Backup</text>
+          </g>
+          <g>
+            <circle class="infra-node-ring" cx="120" cy="160" r="5" style="animation-delay:1.6s" />
+            <circle cx="120" cy="160" r="4" fill="#4ade80" />
+            <text class="infra-label" x="120" y="178" text-anchor="middle">Sieć</text>
+          </g>
+          <circle class="infra-hub-ring" cx="60" cy="95" r="9" />
+          <circle cx="60" cy="95" r="7" fill="#0AF5C0" />
+          <text class="infra-label" x="60" y="78" text-anchor="middle" style="fill:#0AF5C0; font-size:8px;">sirk.cloud</text>
+        </svg>
+        <div class="infra-metrics" id="infraMetrics"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KARUZELA MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- SEKCJA BENTO (OFERTA) -->
+<section id="uslugi" class="section-pad">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-tag">// Dla kogo</span>
+      <h2>Profile firm, które wspieramy na co dzień</h2>
+      <p>Nie obsługujemy wszystkich — obsługujemy dobrze. Przejmujemy IT, żebyś Ty mógł zająć się rozwojem biznesu.</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-card">
+        <div class="bento-icon"><i data-lucide="building-2" size="32"></i></div>
+        <h3>Małe firmy bez działu IT</h3>
+        <p>Zdejmujemy z Twoich barków administrowanie sprzętem, konfigurację sieci firmowej, wdrażanie kopii zapasowych oraz usuwanie bieżących awarii użytkowników.</p>
+      </div>
+      <div class="bento-card">
+        <div class="bento-icon"><i data-lucide="zap" size="32"></i></div>
+        <h3>Zespoły potrzebujące szybkiej reakcji</h3>
+        <p>Gdy technologia zawodzi, liczy się każda minuta. Oferujemy natychmiastowe wsparcie zdalne, eliminując kosztowne przestoje i nerwy w pracy.</p>
+      </div>
+      <div class="bento-card">
+        <div class="bento-icon"><i data-lucide="settings-2" size="32"></i></div>
+        <h3>Firmy chcące IT dopasowanego do siebie</h3>
+        <p>Nie wierzymy w sztywne, szablonowe pakiety. Analizujemy Twoje procesy biurowe, dobieramy bezpieczne rozwiązania chmurowe i infrastrukturę pod Twój budżet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEKCJA CENNIKA -->
+<section id="cennik" class="section-pad">
+  <div class="container">
+    <div class="calc-grid">
+      <div class="section-head">
+        <span class="section-tag">// Transparentne warunki</span>
+        <h2>Cennik dopasowany do zespołu</h2>
+        <p>Płacisz za realną opiekę, nie za sztywny pakiet. Im więcej stanowisk obejmujemy nadzorem IT, tym niższa stawka abonamentowa.</p>
+      </div>
+      
+      <div class="price-card" id="priceCardBox">
+        <div class="slider-container">
+          <div class="slider-header">
+            <span>Liczba stanowisk w firmie:</span>
+            <b id="machineCountLabel">1 stanowisko</b>
+          </div>
+          <input type="range" min="1" max="40" value="1" id="machineSlider">
+        </div>
+
+        <div class="price-metrics">
+          <div class="metric-box">
+            <div class="metric-lbl">Cena za stanowisko</div>
+            <div class="metric-num" id="perMachinePrice">250 <small>zł</small></div>
+          </div>
+          <div class="metric-box active">
+            <div class="metric-lbl">Suma miesięczna</div>
+            <div class="metric-num" style="color:var(--blue);" id="totalPrice">250 <small>zł</small></div>
+          </div>
+        </div>
+        
+        <a href="#" id="queryMailtoBtn" class="calc-email-btn">
+          <i data-lucide="mail" size="18"></i> Wyślij zapytanie
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt" class="section-pad">
+  <div class="container contact-box">
+    <div class="section-head" style="margin-bottom:0;">
+      <span class="section-tag">// Porozmawiajmy bez presji</span>
+      <h2>Odnajdźmy spokój w Twojej infrastrukturze</h2>
+      <p style="margin-top:16px;">Zgłoś się na bezpłatną, 20–30-minutową konsultację (telefonicznie lub online). Bez zobowiązań, rzetelna wiedza bez owijania w bawełnę.</p>
+    </div>
+    
+    <div>
+      <a href="tel:+48511832376" class="contact-method">
+        <div class="method-icon"><i data-lucide="phone" size="20"></i></div>
+        <div>
+          <span style="font-size:11px; color:var(--ink-dim); display:block; text-transform:uppercase; font-family:var(--font-mono);">Telefon · Pon–Pt 8-18</span>
+          <span style="font-weight:700; font-size:18px;">+48 511 832 376</span>
+        </div>
+      </a>
+      <a href="mailto:kjankowski@sirk.cloud" class="contact-method">
+        <div class="method-icon"><i data-lucide="mail" size="20"></i></div>
+        <div>
+          <span style="font-size:11px; color:var(--ink-dim); display:block; text-transform:uppercase; font-family:var(--font-mono);">Napisz e-mail bezpośrednio</span>
+          <span style="font-weight:700; font-size:18px;">kjankowski@sirk.cloud</span>
+        </div>
+      </a>
+      <a href="https://instagram.com/sirk.cloud" target="_blank" rel="noopener noreferrer" class="contact-method">
+        <div class="method-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+          </svg>
+        </div>
+        <div>
+          <span style="font-size:11px; color:var(--ink-dim); display:block; text-transform:uppercase; font-family:var(--font-mono);">Instagram</span>
+          <span style="font-weight:700; font-size:18px;">@sirk.cloud</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- BANER COOKIES -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    Strona <b>sirk.cloud</b> używa podstawowych plików cookies w celu poprawnego działania interaktywnych elementów kalkulatora oraz zbierania anonimowych statystyk.
+  </div>
+  <button class="cookie-btn" id="acceptCookiesBtn">Akceptuję</button>
+</div>
+
+<!-- OKNO MODALNE POLITYKI PRYWATNOŚCI -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-window">
+    <button class="modal-close" id="closePrivacyBtn"><i data-lucide="x" size="20"></i></button>
+    <div class="modal-content">
+      <h2>POLITYKA PRYWATNOŚCI<br>I INFORMACJE OGÓLNE</h2>
+      <p>Niniejsza Polityka Prywatności określa sposób pozyskiwania, przetwarzania oraz zabezpieczania danych osobowych w rozumieniu ustawy o ochronie danych osobowych z dnia 29 sierpnia 1997 roku (Dz.U. Nr 133, poz. 883 z późn. zm.) oraz ustawy o świadczeniu usług drogą elektroniczną z dnia 18 lipca 2002 r. (Dz.U. Nr 144, poz. 1204 z późn. zm.)</p>
+      <p>Właścicielem strony internetowej <b>www.sirk.cloud</b> oraz administratorem danych osobowych jest firma sirk.cloud, reprezentowana przez Krzysztofa Jankowskiego, z siedzibą w Łodzi, woj. łódzkie.</p>
+      
+      <h3>II DANE OSOBOWE</h3>
+      <p>Serwis zbiera informacje podane dobrowolnie przez użytkownika.</p>
+      <p>Dane osobowe są pozyskiwane podczas wysyłania zapytania poprzez bezpośredni kontakt e-mail oraz telefoniczny.</p>
+      <p>Dane osobowe są wykorzystywane wyłącznie w celu udzielenia odpowiedzi, kalkulacji wyceny usług outsourcingu IT oraz realizacji późniejszego wsparcia, o ile użytkownik wyraził na to zgodę.</p>
+      <p>Zawartość strony internetowej można przeglądać bez podawania jakichkolwiek danych osobowych.</p>
+      <p>Każda osoba, która udostępniła swoje dane osobowe, ma prawo do dostępu do ich treści oraz możliwość ich poprawiania, uaktualniania, uzupełniania, jak również żądania zaprzestania przetwarzania danych osobowych oraz wniesienia sprzeciwu wobec przetwarzania danych osobowych. Wymienionych czynności można dokonać poprzez wysłanie stosownego oświadczenia na adres e-mail: <a href="mailto:kjankowski@sirk.cloud">kjankowski@sirk.cloud</a>.</p>
+      <p>Pozyskane przez administratora dane osobowe są przechowywane, przetwarzane i chronione zgodnie z obowiązującymi przepisami prawa.</p>
+      <p>Administrator chroni zgromadzone dane osobowe, korzystając z następujących środków:</p>
+      <ul>
+        <li>szyfrowanie danych przesyłanych w ramach zapytań technicznych</li>
+        <li>zabezpieczenie zbioru danych oraz klastrów monitoringu przed nieuprawnionym dostępem zewnętrznym</li>
+      </ul>
+
+      <h3>III INFORMACJA O PLIKACH COOKIES</h3>
+      <p>Serwis korzysta z plików cookies.</p>
+      <p>Pliki cookies (tzw. „ciasteczka”) stanowią dane informatyczne, w szczególności pliki tekstowe, które przechowywane są w urządzeniu końcowym Użytkownika Serwisu i przeznaczone są do korzystania ze stron internetowych Serwisu. Cookies zazwyczaj zawierają nazwę strony internetowej, z której pochodzą, czas przechowywania ich na urządzeniu końcowym oraz unikalny numer.</p>
+      <p>Podmiotem zamieszczającym na urządzeniu końcowym Użytkownika Serwisu pliki cookies oraz uzyskującym do nich dostęp jest operator Serwisu.</p>
+      <p>Pliki cookies wykorzystywane są w następujących celach:</p>
+      <ul>
+        <li>tworzenia anonimowych statystyk, które pomagają zrozumieć, w jaki sposób Użytkownicy Serwisu korzystają ze stron internetowych, co umożliwia ulepszanie ich struktury, responsywności i zawartości;</li>
+        <li>utrzymania stanów lokalnych (np. zapamiętanie decyzji o zamknięciu okna), dzięki czemu interaktywne elementy strony nie wymagają ponownej konfiguracji przy odświeżeniu;</li>
+        <li>określania profilu użytkownika w celu wyświetlania mu dopasowanych materiałów technicznych w sieciach reklamowych, w szczególności sieci Google.</li>
+      </ul>
+      <p>W ramach Serwisu stosowane są dwa zasadnicze rodzaje plików cookies: „sesyjne” (session cookies) oraz „stałe” (persistent cookies). Cookies „sesyjne” są plikami tymczasowymi, które przechowywane są w urządzeniu końcowym Użytkownika do czasu opuszczenia strony internetowej lub wyłączenia oprogramowania (przeglądarki internetowej). „Stałe” pliki cookies przechowywane są w urządzeniu końcowym Użytkownika przez czas określony w parametrach plików cookies lub do czasu ich usunięcia przez Użytkownika.</p>
+      <p>Oprogramowanie do przeglądania stron internetowych (przeglądarka internetowa) zazwyczaj domyślnie dopuszcza przechowywanie plików cookies w urządzeniu końcowym Użytkownika. Użytkownicy Serwisu mogą dokonać zmiany ustawień w tym zakresie. Przeglądarka internetowa umożliwia usunięcie plików cookies. Możliwe jest także automatyczne blokowanie plików cookies. Szczegółowe informacje na ten temat zawiera pomoc lub dokumentacja przeglądarki internetowej.</p>
+      <p>Ograniczenia stosowania plików cookies mogą wpłynąć na niektóre zaawansowane funkcjonalności kalkulatora i klocków Bento na stronach internetowych Serwisu.</p>
+      <p>Zalecamy przeczytanie polityki ochrony prywatności firm trzecich, aby poznać zasady korzystania z plików cookies wykorzystywane w statystykach: Polityka ochrony prywatności Google Analytics.</p>
+
+      <h3>IV ZARZĄDZANIE PLIKAMI COOKIES – JAK W PRAKTYCE WYRAŻAĆ I COFAĆ ZGODĘ?</h3>
+      <p>Jeśli użytkownik nie chce otrzymywać plików cookies, może zmienić ustawienia przeglądarki. Zastrzegamy, że wyłączenie obsługi plików cookies niezbędnych dla procesów bezpieczeństwa i utrzymania preferencji użytkownika może utrudnić korzystanie ze stron www.</p>
+      <p>W celu zarządzania ustawieniami cookies wybierz ze swojej przeglądarki systemowej odpowiednią sekcję ustawień prywatności (Internet Explorer, Chrome, Safari, Firefox, Opera, Android, iOS).</p>
+
+      <h3>V UDOSTĘPNIENIE DANYCH</h3>
+      <p>Dane podlegają udostępnieniu podmiotom zewnętrznym wyłącznie w granicach prawnie dozwolonych.</p>
+      <p>Operator może mieć obowiązek udzielania informacji zebranych przez Serwis upoważnionym organom na podstawie zgodnych z prawem żądań w zakresie wynikającym z żądania.</p>
+
+      <h3>VI POSTANOWIENIA KOŃCOWE</h3>
+      <p>Administrator ma prawo do zmian w niniejszej Polityce Prywatności. Osoby udostępniające swoje dane osobowe obowiązuje aktualnie obowiązująca wersja Polityki Prywatności, dostępna bezpośrednio w sekcji informacyjnej na stronie <b>sirk.cloud</b>.</p>
+      <p>W sprawach nieuregulowanych niniejszą Polityką Prywatności stosuje się obowiązujące przepisy prawa polskiego.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STOPKA -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <div>© <span id="year"></span> sirk.cloud — Wszelkie prawa zastrzeżone.</div>
+      <div><span class="privacy-trigger" id="privacyLink">Polityka prywatności</span></div>
+    </div>
+    <div class="footer-socials">
+      <a href="tel:+48511832376">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        +48 511 832 376
+      </a>
+      <a href="mailto:kjankowski@sirk.cloud">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="14" x="2" y="5" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+        kjankowski@sirk.cloud
+      </a>
+      <a href="https://instagram.com/sirk.cloud" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+        </svg> 
+        Instagram
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* LOGIKA JEDNEJ STRONY */
+  document.querySelectorAll('[data-target]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('data-target');
+      const targetElement = document.getElementById(targetId);
+      
+      if(targetElement) {
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - 75;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  /* LOGIKA BANERU COOKIES */
+  (function(){
+    const banner = document.getElementById('cookieBanner');
+    const btn = document.getElementById('acceptCookiesBtn');
+    if (!localStorage.getItem('sirk_cookies_accepted')) {
+      setTimeout(() => { banner.classList.add('show'); }, 1200);
+    }
+    btn.addEventListener('click', () => {
+      localStorage.setItem('sirk_cookies_accepted', 'true');
+      banner.classList.remove('show');
+      setTimeout(() => { banner.style.display = 'none'; }, 500);
+    });
+  })();
+
+  /* LOGIKA MODALA POLITYKI PRYWATNOŚCI */
+  (function(){
+    const modal = document.getElementById('privacyModal');
+    const link = document.getElementById('privacyLink');
+    const closeBtn = document.getElementById('closePrivacyBtn');
+    link.addEventListener('click', () => modal.classList.add('open'));
+    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+  })();
+
+  /* BŁYSK MENU */
+  document.querySelectorAll('.nav-cta').forEach(btn => {
+    const shine = document.createElement('span');
+    shine.className = 'shine';
+    btn.appendChild(shine);
+  });
+
+  /* TŁO SIECIOWE (Naprawiona literówka przy wywołaniu stroke) */
+  (function(){
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    function resize() { W = window.innerWidth; H = window.innerHeight; canvas.width = W; canvas.height = H; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const nodes = [];
+    const count = Math.min(Math.floor((W * H) / 13000), 85);
+    for(let i=0; i<count; i++) {
+      nodes.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.6 + 1.2
+      });
+    }
+
+    let mouse = { x: -9999, y: -9999 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for(let i=0; i<nodes.length; i++) {
+        let a = nodes[i];
+        a.x += a.vx; a.y += a.vy;
+        if(a.x < 0 || a.x > W) a.vx *= -1;
+        if(a.y < 0 || a.y > H) a.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.radius, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.45)';
+        ctx.fill();
+
+        for(let j=i+1; j<nodes.length; j++) {
+          let b = nodes[j];
+          let dist = Math.hypot(a.x - b.x, a.y - b.y);
+          if(dist < 140) {
+            ctx.strokeStyle = `rgba(37, 99, 235, ${0.16 * (1 - dist/140)})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+        let mDist = Math.hypot(a.x - mouse.x, a.y - mouse.y);
+        if(mDist < 190) {
+          ctx.strokeStyle = `rgba(10, 245, 192, ${0.35 * (1 - mDist/190)})`;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+          a.x += (mouse.x - a.x) * 0.018;
+          a.y += (mouse.y - a.y) * 0.018;
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* KURSOR GLOW */
+  (function(){
+    const glow = document.getElementById('cursorGlow');
+    if(window.matchMedia('(hover: none)').matches) return;
+    let mx = window.innerWidth/2, my = window.innerHeight/2;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; glow.style.opacity = '1'; }, {passive:true});
+    gsap.ticker.add(() => { gsap.set(glow, {x: mx, y: my}); });
+  })();
+
+  /* SEKWENCJA STARTOWA I INPUT TERMINALA */
+  (function(){
+    const term = document.getElementById('terminalBody');
+    const windowEl = document.getElementById('terminalWindow');
+    const initialPrompt = document.getElementById('initialPrompt');
+    
+    const commandText = "./sirk-support --bootstrap";
+    const logs = [
+      "&gt; Obszar działania: cała Polska",
+      "&gt; Status: <span class='t-success'>online</span>"
+    ];
+    
+    setTimeout(() => {
+      if(initialPrompt) initialPrompt.remove();
+      
+      const typingLine = document.createElement('div');
+      typingLine.style.marginBottom = "6px";
+      typingLine.innerHTML = `<span class='t-prompt'>root@sirk-cloud:~#</span> <span id='animatedCommand'></span><span class='term-cursor'></span>`;
+      term.appendChild(typingLine);
+      
+      const cmdContainer = document.getElementById('animatedCommand');
+      let charIdx = 0;
+      
+      function typeChar() {
+        if (charIdx < commandText.length) {
+          cmdContainer.textContent += commandText.charAt(charIdx);
+          charIdx++;
+          setTimeout(typeChar, 90);
+        } else {
+          const lineCursor = typingLine.querySelector('.term-cursor');
+          if(lineCursor) lineCursor.remove();
+          setTimeout(initSystemLine, 600);
+        }
+      }
+      typeChar();
+    }, 4000);
+    
+    function initSystemLine() {
+      const d = document.createElement('div');
+      d.style.marginBottom = "4px";
+      d.innerHTML = "&gt; Inicjalizacja system wsparcia IT...";
+      term.appendChild(d);
+      windowEl.scrollTop = windowEl.scrollHeight;
+      
+      setTimeout(startProgressBar, 500);
+    }
+    
+    function startProgressBar() {
+      const progressLine = document.createElement('div');
+      progressLine.className = "t-progress-container";
+      progressLine.style.marginBottom = "6px";
+      term.appendChild(progressLine);
+      
+      const totalSteps = 40; 
+      let currentStep = 0;
+      const duration = 3000; 
+      const intervalTime = duration / totalSteps;
+      
+      const interval = setInterval(() => {
+        currentStep++;
+        const percent = Math.round((currentStep / totalSteps) * 100);
+        const bars = "█".repeat(currentStep);
+        const spaces = " ".repeat(totalSteps - currentStep);
+        
+        progressLine.textContent = `[${bars}${spaces}] ${percent}%`;
+        windowEl.scrollTop = windowEl.scrollHeight;
+        
+        if (currentStep >= totalSteps) {
+          clearInterval(interval);
+          setTimeout(printRemainingLogs, 600);
+        }
+      }, intervalTime);
+    }
+    
+    let logIdx = 0;
+    function printRemainingLogs() {
+      if(logIdx < logs.length) {
+        const d = document.createElement('div');
+        d.style.marginBottom = "6px";
+        d.innerHTML = logs[logIdx];
+        term.appendChild(d);
+        logIdx++;
+        windowEl.scrollTop = windowEl.scrollHeight;
+        setTimeout(printRemainingLogs, 800);
+      } else {
+        createInteractiveInput();
+      }
+    }
+    
+    function createInteractiveInput() {
+      const inputLine = document.createElement('div');
+      inputLine.className = 'terminal-input-line';
+      inputLine.innerHTML = `
+        <span class='t-prompt'>root@sirk-cloud:~#</span>
+        <span class='terminal-editable-text'></span><span class='term-cursor'></span>
+        <input type='text' class='terminal-hidden-input' />
+      `;
+      term.appendChild(inputLine);
+      
+      const hiddenInput = inputLine.querySelector('.terminal-hidden-input');
+      const editableText = inputLine.querySelector('.terminal-editable-text');
+      
+      windowEl.addEventListener('click', () => { hiddenInput.focus(); });
+      hiddenInput.focus();
+      
+      hiddenInput.addEventListener('input', (e) => {
+        editableText.textContent = e.target.value;
+      });
+      
+      hiddenInput.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+          const command = hiddenInput.value.trim();
+          const cursor = inputLine.querySelector('.term-cursor');
+          if(cursor) cursor.remove();
+          hiddenInput.remove();
+          
+          if(command.length > 0) {
+            const responseLine = document.createElement('div');
+            responseLine.style.color = '#ef4444';
+            responseLine.style.marginBottom = '4px';
+            responseLine.textContent = `Invalid command: "${command}"`;
+            term.appendChild(responseLine);
+          }
+          
+          windowEl.scrollTop = windowEl.scrollHeight;
+          createInteractiveInput();
+        }
+      });
+    }
+  })();
+
+  /* KARUZELA MARQUEE */
+  (function(){
+    const items = [
+      "Infrastruktura IT", "Rozwiązania chmurowe", "Kopie zapasowe i Disaster Recovery", 
+      "Cyberbezpieczeństwo firmowe", "Wsparcie techniczne zdalne & onsite", "Administracja serwerami", 
+      "Zarządzanie sieciami LAN/WAN", "Audyty bezpieczeństwa IT", "Ochrona danych i RODO",
+      "Wirtualizacja i konteneryzacja", "Monitorowanie usług 24/7", "Zarządzanie licencjami",
+      "Helpdesk IT dla pracowników", "Konfiguracja VPN", "Zarządzanie flotą sprzętową"
+    ];
+    const track = document.getElementById('marqueeTrack');
+    let html = "";
+    for(let r=0; r<2; r++) {
+      items.forEach(item => { html += `<span>${item}</span><span class="sep"> / </span>`; });
+    }
+    track.innerHTML = html;
+  })();
+
+  /* INFRA METRICS */
+  (function(){
+    const metricsData = [
+      { v: "15 min", lbl: "Śr. czas reakcji" },
+      { v: "6", lbl: "Monitorowane usługi" },
+      { v: "99.9%", lbl: "Uptime klientów" }
+    ];
+    document.getElementById('infraMetrics').innerHTML = metricsData.map(m => `
+      <div class="infra-metric">
+        <span class="val">${m.v}</span>
+        <span class="label">${m.lbl}</span>
+      </div>
+    `).join("");
+  })();
+
+  /* KALKULATOR STANOWISK */
+  (function(){
+    const slider = document.getElementById('machineSlider');
+    const label = document.getElementById('machineCountLabel');
+    const perMachineEl = document.getElementById('perMachinePrice');
+    const totalEl = document.getElementById('totalPrice');
+    const scrollBar = document.getElementById('scrollProgress');
+    const mailtoBtn = document.getElementById('queryMailtoBtn');
+
+    function plural(n) {
+      if(n === 1) return 'stanowisko';
+      if(n%10 >= 2 && n%10 <= 4 && !(n%100 >= 12 && n%100 <= 14)) return 'stanowiska';
+      return 'stanowisk';
+    }
+
+    function calculate() {
+      const n = parseInt(slider.value, 10);
+      const suffix = plural(n);
+      label.textContent = `${n} ${suffix}`;
+      
+      const perMachine = Math.round(250 - (n - 1) * (50 / 39));
+      const total = perMachine * n;
+      perMachineEl.innerHTML = `${perMachine} <small>zł</small>`;
+      totalEl.innerHTML = `${total.toLocaleString('pl-PL')} <small>zł</small>`;
+      
+      const emailRecipient = "kjankowski@sirk.cloud";
+      const emailSubject = encodeURIComponent(`Zapytanie ofertowe - Obsługa IT dla firmy (${n} ${suffix})`);
+      const emailBody = encodeURIComponent(
+        `Dzień dobry,\n\nchciałbym/chciałabym zapytać o ofertę kompleksowej opieki i wsparcia IT dla naszej firmy.\n\n` +
+        `Wstępnie zweryfikowaliśmy zapotrzebowanie za pomocą kalkulatora na Państwa stronie.\n` +
+        `Liczba stanowisk w naszej firmie pod nadzór IT: ${n} ${suffix}.\n` +
+        `Szacowany koszt miesięczny z kalkulatora: ${total.toLocaleString('pl-PL')} zł netto.\n\n` +
+        `Proszę o kontakt w celu omówienia szczegółów i przygotowania spersonalizowanej oferty.\n\n` +
+        `Pozdrawiam,\n[Twoje Imię i Nazwisko / Nazwa Firmy]\n[Numer Telefonu]`
+      );
+      mailtoBtn.setAttribute("href", `mailto:${emailRecipient}?subject=${emailSubject}&body=${emailBody}`);
+    }
+    
+    slider.addEventListener('input', calculate);
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      scrollBar.style.width = ((h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100) + '%';
+    }, {passive:true});
+    calculate();
+  })();
+
+  /* PRZECHYŁ 3D GSAP */
+  if(!window.matchMedia('(hover: none)').matches) {
+    document.querySelectorAll('.contact-method').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(card, { rotateX: y * -7, rotateY: x * 8, duration: 0.4, ease: 'power2.out', transformPerspective: 800 });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.6, ease: 'power2.out' });
+      });
+    });
+  }
+
+  /* SCROLL ANIMACJE */
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.bento-card, .price-card, .contact-method').forEach((el) => {
+    gsap.from(el, { opacity: 0, y: 35, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+  });
+</script>
+</body>
+</html>

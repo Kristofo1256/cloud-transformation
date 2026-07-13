@@ -55,3 +55,16 @@ Notatki i cheat-sheet z laboratoriów inżynieryjnych. Wszystkie komendy przetes
 * `git branch -M main` - Ustala nazwę głównej gałęzi kodu jako `main` (standard branżowy).
 * `git remote add origin git@github.com:LOGIN/REPO.git` - Podpina lokalny folder pod zdalne repozytorium w chmurze GitHuba.
 * `git push -u origin main` - Wypycha (wysyła) wszystkie lokalne zapisy (commity) bezpośrednio do chmury GitHuba.
+
+---
+
+## 🐳 BLOK 10 & 11: ENGINE DEPLOYMENT & CONTAINER LIFECYCLE
+> 💡 Docker pozwala na izolację aplikacji od systemu operacyjnego hosta za pomocą lekkich kontenerów.
+* `sudo apt install docker.io -y` - Instalacja oficjalnego silnika Docker Engine w systemie Ubuntu Server.
+* `sudo usermod -aG docker $USER` - Dodanie bieżącego użytkownika do grupy systemowej `docker` (nadanie uprawnień do zarządzania kontenerami bez użycia `sudo`).
+* `newgrp docker` - Natychmiastowe odświeżenie grup systemowych w bieżącej sesji terminala (eliminuje błąd *Permission Denied*).
+* `docker run -d -p 8080:80 --name ecommerce-landing-page nginx` - Pobranie obrazu Nginx i uruchomienie go w tle (`-d`) z mapowaniem portu zewnętrznego hosta `8080` na wewnętrzny port kontenera `80`.
+* `docker ps` - Listowanie aktywnych kontenerów wraz z ich identyfikatorami PID/ID, portami i statusem.
+* `docker logs [container_name]` - Ekstrakcja logów aplikacyjnych bezpośrednio ze strumienia kontenera (kluczowe do integracji z systemami monitoringu).
+* `docker stop [container_name]` - Wysłanie sygnału SIGTERM do aplikacji wewnątrz kontenera i bezpieczne jej zatrzymanie.
+* `docker rm [container_name]` - Całkowite usunięcie zasobów kontenera z dysku systemowego.
