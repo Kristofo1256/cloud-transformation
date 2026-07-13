@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  marketing-site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-compose-app
+    ports:
+      - 9005:80
+    restart: always
