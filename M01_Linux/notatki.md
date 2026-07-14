@@ -126,3 +126,17 @@ This document serves as a comprehensive reference guide for Linux system adminis
 * `Bind Mount` - Direct mapping of a specific, existing path on the host to a path inside the container. Ideal for real-time code development.
 * `docker run -v /host/path:/container/path` - Mount a directory using the legacy run command.
 * In Docker Compose: Defined under the `volumes:` key for a specific service to synchronize code and persist data.
+
+---
+
+## 🌐 BLOCK 14: ISOLATED CONTAINER NETWORKING (DOCKER NETWORKS)
+> 💡 Docker Networks allow isolated containers to communicate with each other securely using internal DNS resolution.
+* `Bridge Network` - The default network driver. Containers on the same custom bridge network can talk to each other using their service/container names as hostnames.
+* `Isolation` - Databases or backend services can remain completely hidden from the host machine (no ports exposed to the outside world), while frontend apps in the same network can still access them internally.
+
+---
+
+## 📊 BLOCK 15: MULTI-CONTAINER MONITORING & LOG MANAGEMENT
+> 💡 Essential commands for debugging and observing active multi-container environments.
+* `docker compose stats` - Displays a live, real-time resource usage stream (CPU, Memory, Network I/O) for all containers in the stack.
+* `docker compose logs -f` - Streams aggregated, color-coded live logs from all services in the compose file simultaneously.
