@@ -11,3 +11,21 @@ services:
     restart: always
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html
+    networks:
+      - ecommerce-net
+
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: ecommerce-db
+    restart: always
+    environment:
+      POSTGRES_USER: krzysztof
+      POSTGRES_PASSWORD: MojeSuperHaslo123
+      POSTGRES_DB: ecom_data
+    networks:
+      - ecommerce-net
+    # ZAUWAŻ: Nie ma tutaj sekcji "ports"! Baza jest niewidoczna z zewnątrz.
+
+networks:
+  ecommerce-net:
+    driver: bridge
